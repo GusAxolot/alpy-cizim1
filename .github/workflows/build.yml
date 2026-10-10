@@ -16,6 +16,11 @@ jobs:
           channel: stable
       - run: flutter create --project-name alpy_cizim --org com.alpy --platforms android .
       - run: sed -i 's|<application|<uses-permission android:name="android.permission.CAMERA"/>\n    <application|' android/app/src/main/AndroidManifest.xml
+      - run: sed -i 's|android:label="alpy_cizim"|android:label="Alpy Misali Çizim"|' android/app/src/main/AndroidManifest.xml
+      - run: |
+          for d in mdpi hdpi xhdpi xxhdpi xxxhdpi; do
+            cp icon.png android/app/src/main/res/mipmap-$d/ic_launcher.png
+          done
       - run: flutter pub get
       - run: flutter build apk --release
       - uses: actions/upload-artifact@v4
