@@ -18,9 +18,18 @@ jobs:
       - run: sed -i 's|<application|<uses-permission android:name="android.permission.CAMERA"/>\n    <application|' android/app/src/main/AndroidManifest.xml
       - run: sed -i 's|android:label="alpy_cizim"|android:label="Alpy Misali Çizim"|' android/app/src/main/AndroidManifest.xml
       - run: |
-          for d in mdpi hdpi xhdpi xxhdpi xxxhdpi; do
-            cp icon.png android/app/src/main/res/mipmap-$d/ic_launcher.png
-          done
+          pip install pillow
+          python3 - <<'EOF'
+          from PIL import Image
+          img = Image.open('icon.png').convert('RGBA')
+          w, h = img.size
+          m = min(w, h)
+          l, t = (w - m) // 2, (h - m) // 2
+          img = img.crop((l, t, l + m, t + m))
+          sizes = {'mdpi': 48, 'hdpi': 72, 'xhdpi': 96, 'xxhdpi': 144, 'xxxhdpi': 192}
+          for d, s in sizes.items():
+              img.resize((s, s), Image.LANCZOS).save(f'android/app/src/main/res/mipmap-{d}/ic_launcher.png', 'PNG')
+          EOF
       - run: flutter pub get
       - run: flutter build apk --release
       - uses: actions/upload-artifact@v4
