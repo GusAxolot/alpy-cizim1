@@ -1,0 +1,21 @@
+name: alpy_cizim
+description: Alpy Misali Cizim
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  camera: ^0.11.0
+  image_picker: ^1.1.2
+  shared_preferences: ^2.3.2
+
+flutter:
+  uses-material-design: true
+  fonts:
+    - family: Minecraft
+      fonts:
+        - asset: assets/fonts/Minecraft.ttf
