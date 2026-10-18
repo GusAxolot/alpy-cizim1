@@ -114,6 +114,8 @@ class _DrawScreenState extends State<DrawScreen> {
   double _opacity = 0.5;
   double _scale = 1;
   double _baseScale = 1;
+  double _rot = 0;
+  double _baseRot = 0;
   Offset _offset = Offset.zero;
   bool _locked = false;
   bool _showBar = false;
@@ -233,23 +235,30 @@ class _DrawScreenState extends State<DrawScreen> {
               offset: _offset,
               child: Transform.scale(
                 scale: _scale,
-                child: GestureDetector(
-                  onTap: () {
-                    if (!_locked) setState(() => _showBar = !_showBar);
-                  },
-                  onDoubleTap: _toggleLock,
-                  onScaleStart: (d) => _baseScale = _scale,
-                  onScaleUpdate: (d) {
-                    if (_locked) return;
-                    setState(() {
-                      _scale = (_baseScale * d.scale).clamp(0.2, 5.0);
-                      _offset += d.focalPointDelta;
-                    });
-                  },
-                  child: Opacity(
-                    opacity: _opacity,
-                    child: Image.file(File(widget.path),
-                        width: w, fit: BoxFit.contain),
+                child: Transform.rotate(
+                  angle: _rot,
+                  child: GestureDetector(
+                    onTap: () {
+                      if (!_locked) setState(() => _showBar = !_showBar);
+                    },
+                    onDoubleTap: _toggleLock,
+                    onScaleStart: (d) {
+                      _baseScale = _scale;
+                      _baseRot = _rot;
+                    },
+                    onScaleUpdate: (d) {
+                      if (_locked) return;
+                      setState(() {
+                        _scale = (_baseScale * d.scale).clamp(0.2, 5.0);
+                        _rot = _baseRot + d.rotation;
+                        _offset += d.focalPointDelta;
+                      });
+                    },
+                    child: Opacity(
+                      opacity: _opacity,
+                      child: Image.file(File(widget.path),
+                          width: w, fit: BoxFit.contain),
+                    ),
                   ),
                 ),
               ),
